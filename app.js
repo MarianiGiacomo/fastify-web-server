@@ -3,25 +3,20 @@
 const path = require('node:path')
 const AutoLoad = require('@fastify/autoload')
 
-const dev = process.env.NODE_ENV !== 'production'
-
-const fastifyStatic = dev && require('@fastify/static')
+const pointOfView = require('@fastify/view')
+const handlebars = require('handlebars')
 
 // Pass --options via CLI arguments in command to enable these options.
 const options = {}
 
 module.exports = async function (fastify, opts) {
-  // Place here your custom code!
-  if (dev) {
-    fastify.register(fastifyStatic, {
-      root: path.join(__dirname, 'public')
-    })
-  }
-  // Do not touch the following lines
 
-  // This loads all plugins defined in plugins
-  // those should be support plugins that are reused
-  // through your application
+  fastify.register(pointOfView, {
+    engine: { handlebars },
+    root: path.join(__dirname, 'views'),
+    layout: 'layout.hbs'
+  })
+
   fastify.register(AutoLoad, {
     dir: path.join(__dirname, 'plugins'),
     options: Object.assign({}, opts)
